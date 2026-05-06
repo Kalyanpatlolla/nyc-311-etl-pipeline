@@ -171,6 +171,5 @@ python pipeline.py
 
 ## 👤 Author
 
-**Kalyan Reddy**
-MS Computer Science – University of Cincinnati
-Aspiring Data Engineer
+**Venkata Kalyan Reddy Patlolla**
+
