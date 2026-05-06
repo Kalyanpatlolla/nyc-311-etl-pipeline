@@ -1,0 +1,11 @@
+api:
+  url: "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
+  limit: 100
+
+bigquery:
+  dataset: "nyc_311_pipeline"
+  table: "service_requests"
+
+paths:
+  raw_data: "data/raw/nyc_311_raw.json"
+  processed_data: "data/processed/nyc_311_clean.parquet"
