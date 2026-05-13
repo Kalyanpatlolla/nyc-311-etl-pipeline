@@ -1,6 +1,25 @@
+# Python
 venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment
 .env
-*.json
+*.env.local
+
+# Data files (regenerable by running the pipeline)
 data/raw/
 data/processed/
-__pycache__/
+data/warehouse/
+*.duckdb
+*.parquet
+
+# Airflow runtime files
+airflow/logs/
+airflow/config/
+airflow/plugins/
+
+# OS
+.DS_Store
+Thumbs.db
