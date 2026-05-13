@@ -293,6 +293,6 @@ These are valuable but belong to a later learning stage. The principle here: und
 
 ## 👤 Author
 
-**Kalyan Reddy Patlolla**
-M.Eng. Computer Science — University of Cincinnati
+**Venkata Kalyan Reddy Patlolla**
+MS in Computer Science — University of Cincinnati
 [@Kalyanpatlolla](https://github.com/Kalyanpatlolla)
