@@ -2,6 +2,10 @@ import json
 import pandas as pd
 import yaml
 
+from src.utils import get_logger
+
+log = get_logger(__name__)
+
 
 def load_config():
     with open("config.yaml", "r") as f:
@@ -14,14 +18,14 @@ def transform_data():
     raw_path = config["paths"]["raw_data"]
     processed_path = config["paths"]["processed_data"]
 
-    print("Starting data transformation...")
+    log.info("Starting data transformation...")
 
     with open(raw_path, "r") as f:
         data = json.load(f)
 
     df = pd.DataFrame(data)
 
-    print(f"Raw records loaded: {len(df)}")
+    log.info(f"Raw records loaded: {len(df)}")
 
     required_columns = [
         "unique_key",
@@ -51,8 +55,8 @@ def transform_data():
 
     df.to_parquet(processed_path, index=False)
 
-    print(f"Clean records saved: {len(df)}")
-    print(f"Processed file saved to: {processed_path}")
+    log.info(f"Clean records saved: {len(df)}")
+    log.info(f"Processed file saved to: {processed_path}")
 
     return df
 

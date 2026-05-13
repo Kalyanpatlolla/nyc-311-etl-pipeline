@@ -3,9 +3,14 @@ import yaml
 import json
 import time
 
+from src.utils import get_logger
+
+log = get_logger(__name__)
+
 
 def extract_data():
-    print("Starting data extraction...")
+
+    log.info("Starting data extraction...")
 
     # Load config
     with open("config.yaml", "r") as f:
@@ -23,8 +28,10 @@ def extract_data():
     max_retries = 3
 
     for attempt in range(max_retries):
+
         try:
             response = requests.get(url, params=params, timeout=30)
+
             response.raise_for_status()
 
             data = response.json()
@@ -32,23 +39,35 @@ def extract_data():
             with open(output_path, "w") as f:
                 json.dump(data, f)
 
-            print(f"Data successfully saved to {output_path}")
-            print(f"Total records fetched: {len(data)}")
+            log.info(f"Data successfully saved to {output_path}")
+            log.info(f"Total records fetched: {len(data)}")
 
             return data
 
         except Exception as e:
-            print(f"Attempt {attempt + 1} failed: {e}")
+
+            log.warning(f"Attempt {attempt + 1} failed: {e}")
+
             time.sleep(2)
 
-    # ❌ After retries fail → fallback logic
-    print("Extraction failed after retries.")
+    # Fallback logic
+    log.error("Extraction failed after retries.")
 
     try:
         with open(output_path, "r") as f:
+
             data = json.load(f)
-            print("Using existing local raw file as fallback.")
+
+            log.info("Using existing local raw file as fallback.")
+
             return data
+
     except Exception:
-        print("No fallback data available.")
+
+        log.error("No fallback data available.")
+
         return None
+
+
+if __name__ == "__main__":
+    extract_data()
