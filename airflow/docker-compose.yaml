@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+  airflow-init:
+    image: apache/airflow:2.9.1
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__WEBSERVER__BASE_URL: "https://supreme-space-goldfish-97j46grx77x4h7965-8080.app.github.dev"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: >
+      bash -c "
+      pip install duckdb pandas pyarrow requests pyyaml &&
+      airflow db migrate &&
+      airflow users create
+      --username airflow
+      --password airflow
+      --firstname Kalyan
+      --lastname Reddy
+      --role Admin
+      --email admin@example.com || true
+      "
+
+  airflow-webserver:
+    image: apache/airflow:2.9.1
+    restart: always
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__WEBSERVER__BASE_URL: "https://supreme-space-goldfish-97j46grx77x4h7965-8080.app.github.dev"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ../src:/opt/airflow/src
+      - ../data:/opt/airflow/data
+      - ../config.yaml:/opt/airflow/config.yaml
+    ports:
+      - "8080:8080"
+    command: bash -c "pip install duckdb pandas pyarrow requests pyyaml && airflow webserver"
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.1
+    restart: always
+    depends_on:
+      - airflow-webserver
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__WEBSERVER__BASE_URL: "https://supreme-space-goldfish-97j46grx77x4h7965-8080.app.github.dev"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ../src:/opt/airflow/src
+      - ../data:/opt/airflow/data
+      - ../config.yaml:/opt/airflow/config.yaml
+    command: bash -c "pip install duckdb pandas pyarrow requests pyyaml && airflow scheduler"
+
+volumes:
+  postgres-db-volume:
